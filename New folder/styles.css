@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: rgb(1, 70, 130);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: none;
+}
+
+/* wrapper centers everything without squishing */
+.game-wrapper {
+    position: relative;
+}
+
+/* canvas draws normally */
+canvas {
+    border: 3px solid white;
+    display: block;
+}
+
+/* hide asset images (the JS draws them ON the canvas) */
+#layer1,
+#xwingImage {
+    display: none;
+}
+
+/* buttons */
+.start-btn,
+.play-again-btn {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 25px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    border: none;
+    background: white;
+}
+
+.start-btn {
+    top: 20px;
+}
+
+.play-again-btn {
+    top: 80px;
+}
+
+.hidden {
+    display: none;
+}
