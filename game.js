@@ -279,6 +279,14 @@ document.addEventListener("DOMContentLoaded", () => {
             // Score (center top)
             ctx.textAlign = "center";
             ctx.fillText("Score: " + this.game.score, this.game.width / 2, 40);
+            // Score multiplier indicator (appears after 30s)
+            if (this.game.scoreMultiplier && this.game.scoreMultiplier > 1) {
+                ctx.save();
+                ctx.fillStyle = "#ffd700"; // gold color
+                ctx.font = "18px " + this.fontfamily;
+                ctx.fillText("x" + this.game.scoreMultiplier, this.game.width / 2 + 110, 40);
+                ctx.restore();
+            }
 
             // Lives as hearts (left)
             ctx.textAlign = "start";
@@ -291,6 +299,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 const x = heartsX + i * (heartSize + heartSpacing) + heartSize / 2;
                 drawHeart(ctx, x, heartsY, heartSize);
             }
+
+            // Time (over hearts on the left)
+            const formattedTime = (this.game.gametime * 0.001).toFixed(1);
+            ctx.fillStyle = this.color;
+            ctx.textAlign = "start";
+            ctx.font = "20px " + this.fontfamily;
+            ctx.fillText("Time: " + formattedTime, heartsX, heartsY - 20);
 
             // Ammo bars (top-right)
             ctx.fillStyle = "white";
@@ -311,10 +326,6 @@ document.addEventListener("DOMContentLoaded", () => {
             ctx.textAlign = "right";
             ctx.fillText("High: " + this.game.highScore, this.game.width - rightMargin, 40);
 
-            // Time (left)
-            const formattedTime = (this.game.gametime * 0.001).toFixed(1);
-            ctx.textAlign = "start";
-            ctx.fillText("Time: " + formattedTime, 20, 100);
 
             // Game over message
             if (this.game.gameOver) {
@@ -390,6 +401,7 @@ document.addEventListener("DOMContentLoaded", () => {
             this.invincibleTimer = 0;
             this.invincibleDuration = 1000; // ms
             this.score = 0;
+            this.scoreMultiplier = 1; // doubles after 30s
             this.winningScore = 100;
             this.gametime = 9999999999999; // ms
             this.speed = 1;
@@ -410,6 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
             this.invincible = false;
             this.invincibleTimer = 0;
             this.score = 0;
+            this.scoreMultiplier = 1; // reset multiplier on game reset
             this._highScoreSaved = false;
             this.gametime = 0;
             this.background = new Background(this);
@@ -486,6 +499,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (this.gameOver && !this._highScoreSaved) {
                 if (this.score > this.highScore) {
+                if (this.gametime >= 30000) this.scoreMultiplier = 2;
                     this.highScore = this.score;
                     try {
                         localStorage.setItem("simpleGameHighScore", String(this.highScore));

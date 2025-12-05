@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-Wing Game</title>
+    <!-- Favicon shown in the browser tab -->
+    <link rel="icon" href="./x-wing.png" type="image/png">
     
 
     <style>
@@ -34,6 +37,14 @@
             color: white;
             font-size: 26px;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .title img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
         }
 
         /* Simple buttons */
@@ -83,7 +94,7 @@
 <body>
 
     <div id="gameContainer">
-        <div class="title">X-Wing Game</div>
+    <div class="title"><img id="gameLogo" src="./x-wing.png" alt="Game logo"> X-Wing Game</div>
         <div class="btnRow" aria-label="Game actions">
             <button id="startBtn" class="btn">Start</button>
             <button id="playAgainBtn" class="btn" style="display:none">Play Again</button>
