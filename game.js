@@ -403,6 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
             this.highScore = saved ? parseInt(saved, 10) : 0;
             this._highScoreSaved = false;
             this.particles = [];
+            this.gameOverCause = null;
         }
 
         reset() {
@@ -421,10 +422,24 @@ document.addEventListener("DOMContentLoaded", () => {
             this.gametime = 0;
             this.background = new Background(this);
             this.particles = [];
+            this.gameOverCause = null;
         }
 
         update(deltaTime) {
-            if (!this.gameOver) this.gametime += deltaTime;
+            // Recover from stray gameOver flags so play continues until lives run out.
+            if (this.gameOver && this.lives > 0 && this.gameOverCause === null) {
+                this.gameOver = false;
+                this.gameOverCause = null;
+                this._highScoreSaved = false;
+            }
+
+            if (!this.gameOver) {
+                this.gametime += deltaTime;
+                if (this.gametime >= 30000 && this.scoreMultiplier === 1) {
+                    this.scoreMultiplier = 2;
+                }
+            }
+
             this.player.update(deltaTime);
             this.background.update();
 
@@ -454,7 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         this.lives--;
                         this.invincible = true;
                         this.invincibleTimer = 0;
-                        if (this.lives <= 0) this.gameOver = true;
+                        if (this.lives <= 0) this.endGame('death');
                     }
                 }
 
@@ -468,7 +483,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                         if (enemy.lives <= 0) {
                             enemy.markedForDeletion = true;
-                            this.score += enemy.score;
+                            const points = enemy.score * this.scoreMultiplier;
+                            this.score += points;
                             for (let i = 0; i < 14; i++) {
                                 this.particles.push(new Particle(this, enemy.x + enemy.width / 2, enemy.y + enemy.height / 2));
                             }
@@ -490,18 +506,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 this.enemyTimer += deltaTime;
             }
 
-            if (this.gameOver && !this._highScoreSaved) {
-                if (this.score > this.highScore) {
-                if (this.gametime >= 30000) this.scoreMultiplier = 2;
-                    this.highScore = this.score;
-                    try {
-                        localStorage.setItem("simpleGameHighScore", String(this.highScore));
-                    } catch (e) {
-                        console.warn("Could not persist high score:", e);
-                    }
+        }
+
+        endGame(reason = 'death') {
+            if (this.gameOver) return;
+            this.gameOver = true;
+            this.gameOverCause = reason;
+            this.persistHighScore();
+        }
+
+        persistHighScore() {
+            if (this._highScoreSaved) return;
+            if (this.score > this.highScore) {
+                this.highScore = this.score;
+                try {
+                    localStorage.setItem("simpleGameHighScore", String(this.highScore));
+                } catch (e) {
+                    console.warn("Could not persist high score:", e);
                 }
-                this._highScoreSaved = true;
             }
+            this._highScoreSaved = true;
         }
 
         draw(ctx) {
