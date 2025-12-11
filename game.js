@@ -331,13 +331,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (this.game.gameOver) {
                 ctx.textAlign = "center";
                 let message1, message2;
-                if (this.game.score >= this.game.winningScore) {
-                    message1 = "You Win!";
-                    message2 = "Well Done!";
-                } else {
-                    message1 = "Game Over!";
-                    message2 = "Try Again!";
-                }
+                message1 = "Game Over!";
+                message2 = "Try Again!";
                 ctx.font = "50px " + this.fontfamily;
                 ctx.fillText(message1, this.game.width / 2, this.game.height / 2);
                 ctx.font = "25px " + this.fontfamily;
@@ -402,7 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
             this.invincibleDuration = 1000; // ms
             this.score = 0;
             this.scoreMultiplier = 1; // doubles after 30s
-            this.winningScore = 100;
             this.gametime = 9999999999999; // ms
             this.speed = 1;
             const saved = localStorage.getItem("simpleGameHighScore");
@@ -478,7 +472,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             for (let i = 0; i < 14; i++) {
                                 this.particles.push(new Particle(this, enemy.x + enemy.width / 2, enemy.y + enemy.height / 2));
                             }
-                            if (this.score >= this.winningScore) this.gameOver = true;
                         }
                     }
                 });
